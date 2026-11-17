@@ -62,8 +62,7 @@ code, pre, textarea {
 }
 
 .topbar {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 20;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -221,6 +220,7 @@ code, pre, textarea {
 
 .toggle-chip {
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
@@ -228,7 +228,16 @@ code, pre, textarea {
   background: var(--surface-alt);
   border: 1px solid var(--border);
   font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
+}
+
+.toggle-chip input[type="checkbox"] {
+  min-height: auto;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
 }
 
 .muted {
@@ -435,3 +444,4 @@ textarea#tool-args-input {
     grid-template-columns: 1fr;
   }
 }
+
