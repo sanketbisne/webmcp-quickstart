@@ -48,6 +48,32 @@ Calling `complete_task` (`{ "id": 1 }`) updates task `#1` directly on the board,
 
 ![Dark Mode and complete_task](docs/assets/03-dark-mode-complete-task.png)
 
+### 3. Native Chrome DevTools WebMCP Execution (`Completed`)
+
+Running `book_session` directly from **DevTools → Application → WebMCP → Run tool** executes the declarative `<form toolname="book_session">` contract natively inside Chrome, logs **`Completed`** (`0 failed`, `0 canceled`) in **Tool activity**, and renders **`🤖 Invoked by AI Agent`** on the page:
+
+![Chrome DevTools Native WebMCP Completed Call](docs/assets/04-devtools-webmcp-completed.jpg)
+
+---
+
+## Real-World Comparison: DOM Scraping vs. WebMCP
+
+How does this simple quickstart compare to real-world production browser automation?
+
+| Dimension | Traditional Browser Agent (DOM Scraping / Vision) | WebMCP (`navigator.modelContext` + `<form toolname>`) |
+|---|---|---|
+| **How it finds inputs** | Fragile CSS/XPath selectors (`#checkout > div:nth-child(3) > input`) or repeated screenshots + coordinate guesses | Typed **JSON Schema** published directly by the page (`name`, `email`, `topic`, `format`) |
+| **When UI changes** | Any CSS class rename, A/B test, or responsive layout shift breaks the automation | Layout & styling can change freely as long as the tool contract stays intact |
+| **Speed & token cost** | Multiple LLM vision turns (screenshot → find box → click → type → scroll → submit) | **Single deterministic tool call** with structured JSON response via `e.respondWith(...)` |
+| **Auditability** | Page cannot tell a real user apart from a bot | `SubmitEvent.agentInvoked` explicitly flags agent actions (`🤖 Invoked by AI Agent` vs `👤 Submitted by Human`) |
+
+### Mapping This Quickstart to Real-World Apps
+
+| Quickstart Demo Tool | Real-World Production Equivalent | How It Scales |
+|---|---|---|
+| **`<form toolname="book_session">`** (Declarative HTML) | **E-Commerce Shipping Form / SaaS Support Ticket / Appointment Booking** | Add `toolname`, `tooldescription`, and `toolparamdescription` to an existing checkout or booking `<form>`—agents fill & validate all fields in one shot with zero custom JS glue |
+| **`list_tasks` / `add_task` / `complete_task`** (Imperative JS) | **Product Catalog Search, Cart Mutation, Filtering Dashboards** (e.g., [NexusGear Storefront + Google ADK](https://github.com/sanketbisne/adk-webmcp-storefront)) | Register stateful SPA actions via `navigator.modelContext.registerTool()`, mount/unmount tools per route with `AbortController`, and enforce server/ADK safety guardrails before sensitive mutations like checkout |
+
 ---
 
 ## Step-by-Step Setup & Live Chrome Demo
@@ -143,7 +169,8 @@ webmcp-quickstart/
 ├── docs/assets/
 │   ├── 01-overview-light.png
 │   ├── 02-agent-execution-demo.png
-│   └── 03-dark-mode-complete-task.png
+│   ├── 03-dark-mode-complete-task.png
+│   └── 04-devtools-webmcp-completed.jpg
 ├── index.html   # Task Board UI + Declarative <form toolname="book_session">
 ├── style.css    # Clean responsive Light/Dark styling
 ├── app.js       # Imperative registerTool() + Declarative submit hook + Simulator
