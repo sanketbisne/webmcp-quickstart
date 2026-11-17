@@ -290,10 +290,9 @@ function initDeclarativeBookingForm() {
     appendLog(`DECLARATIVE SUBMIT (agentInvoked=${isAgent})`, booking);
 
     // Chrome WebMCP declarative hook: respondWith only when agentInvoked.
-    // Defer form.reset() on agentInvoked submits so Chrome does not treat synchronous reset as `toolcancel`.
+    // Skip form.reset() on agentInvoked submits because Chrome treats any reset as `Tool execution cancelled by a form reset`.
     if (e.agentInvoked && typeof e.respondWith === 'function') {
       e.respondWith(Promise.resolve(JSON.stringify({ status: 'booked', booking })));
-      setTimeout(() => form.reset(), 150);
     } else {
       form.reset();
     }
