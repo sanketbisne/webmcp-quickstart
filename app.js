@@ -30,10 +30,12 @@ const EXAMPLE_ARGS = {
 // Native Chrome WebMCP mode and standard browsers without flags enabled.
 const localTools = new Map();
 let imperativeAbortController = null;
-const nativeWebMcp =
-  typeof navigator !== 'undefined' &&
-  'modelContext' in navigator &&
-  typeof navigator.modelContext?.registerTool === 'function';
+// Chrome 157+ exposes WebMCP on document.modelContext; earlier builds used navigator.modelContext
+const modelContext =
+  (typeof document !== 'undefined' && document.modelContext) ||
+  (typeof navigator !== 'undefined' && navigator.modelContext) ||
+  null;
+const nativeWebMcp = typeof modelContext?.registerTool === 'function';
 
 function appendLog(tag, detail) {
   const logEl = document.getElementById('invocation-log');
@@ -197,8 +199,8 @@ function registerImperativeTools(enable) {
   }
   ['list_tasks', 'add_task', 'complete_task'].forEach((name) => {
     localTools.delete(name);
-    if (nativeWebMcp && typeof navigator.modelContext.unregisterTool === 'function') {
-      try { navigator.modelContext.unregisterTool(name); } catch (_) {}
+    if (nativeWebMcp && typeof modelContext.unregisterTool === 'function') {
+      try { modelContext.unregisterTool(name); } catch (_) {}
     }
   });
 
@@ -215,10 +217,10 @@ function registerImperativeTools(enable) {
     localTools.set(tool.name, tool);
     if (nativeWebMcp) {
       try {
-        navigator.modelContext.registerTool(tool, { signal: imperativeAbortController.signal });
+        modelContext.registerTool(tool, { signal: imperativeAbortController.signal });
       } catch (_) {
-        // Older Chrome flag versions take registerTool(tool) with 1 argument
-        try { navigator.modelContext.registerTool(tool); } catch (_) {}
+        // Fallback for builds taking registerTool(tool) with 1 argument
+        try { modelContext.registerTool(tool); } catch (_) {}
       }
     }
   });
