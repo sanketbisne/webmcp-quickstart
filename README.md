@@ -58,6 +58,10 @@ With **`chrome://flags/#enable-webmcp-testing`** enabled in Chrome 157+, all 4 t
 
 ![Chrome DevTools All 4 Tools and list_tasks Output](docs/assets/05-devtools-all-4-tools.jpg)
 
+Running **`add_task`** from **Run tool** (`title: "Ninja"`, `priority: "high"`) creates **`#4 Ninja` (`HIGH`)** live on the task board and returns the created task JSON in DevTools **Output** (`0 failed | 0 canceled`):
+
+![Chrome DevTools Native add_task Execution](docs/assets/06-devtools-add-task.jpg)
+
 ---
 
 ## Real-World Comparison: DOM Scraping vs. WebMCP
@@ -177,7 +181,8 @@ webmcp-quickstart/
 │   ├── 02-agent-execution-demo.png
 │   ├── 03-dark-mode-complete-task.png
 │   ├── 04-devtools-webmcp-completed.jpg
-│   └── 05-devtools-all-4-tools.jpg
+│   ├── 05-devtools-all-4-tools.jpg
+│   └── 06-devtools-add-task.jpg
 ├── index.html   # Task Board UI + Declarative <form toolname="book_session">
 ├── style.css    # Clean responsive Light/Dark styling
 ├── app.js       # Imperative registerTool() + Declarative submit hook + Simulator

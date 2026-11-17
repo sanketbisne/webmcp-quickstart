@@ -171,11 +171,15 @@ function buildImperativeTools() {
       },
       execute: async (input = {}) => {
         let task = null;
-        if (input.id !== undefined) {
-          task = state.tasks.find((t) => t.id === Number(input.id));
-        } else if (input.title) {
-          const needle = String(input.title).toLowerCase();
-          task = state.tasks.find((t) => t.title.toLowerCase().includes(needle));
+        const numId = Number(input.id);
+        if (input.id !== undefined && input.id !== null && input.id !== '' && numId > 0) {
+          task = state.tasks.find((t) => t.id === numId);
+        }
+        if (!task && input.title) {
+          const needle = String(input.title).trim().toLowerCase();
+          if (needle) {
+            task = state.tasks.find((t) => t.title.toLowerCase().includes(needle));
+          }
         }
         if (!task) {
           const err = { error: 'No matching task found', input };
