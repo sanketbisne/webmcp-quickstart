@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebMCP Quickstart • Pure Browser-Native AI Tools Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Roboto+Mono:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <span class="brand-dots" aria-hidden="true">
+          <i class="dot blue"></i><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i>
+        </span>
+        <div>
+          <strong>WebMCP Quickstart</strong>
+          <span class="brand-sub">Pure HTML + JS • Zero Backend • Zero ADK</span>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span class="status-pill" id="webmcp-runtime-badge">Checking WebMCP...</span>
+        <button type="button" class="btn-ghost" id="theme-toggle" aria-label="Toggle theme">Dark Mode</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-grid">
+    <!-- Left Column: Normal Web App (Imperative + Declarative WebMCP Targets) -->
+    <section class="panel-stack">
+      <!-- Demo Intro Banner -->
+      <div class="card intro-card">
+        <span class="tag">How WebMCP Works</span>
+        <h1>Turn Any Web Page Into Structured AI Tools</h1>
+        <p>
+          Instead of forcing AI agents to scrape CSS selectors or guess clicks, this page exposes typed contracts directly through <code>navigator.modelContext</code> (Imperative JS) and HTML <code>&lt;form toolname="..."&gt;</code> attributes (Declarative HTML).
+        </p>
+      </div>
+
+      <!-- Imperative WebMCP Demo: Task Manager -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <span class="tag blue">Imperative API • navigator.modelContext.registerTool()</span>
+            <h2>1. Live Task Board</h2>
+          </div>
+          <label class="toggle-chip" title="Mount or unmount add_task & complete_task via AbortController">
+            <input type="checkbox" id="toggle-imperative" checked>
+            <span>Tools Registered</span>
+          </label>
+        </div>
+
+        <form id="manual-task-form" class="inline-form">
+          <input type="text" id="manual-task-input" placeholder="Add a task manually (or let an agent call add_task)..." required>
+          <select id="manual-task-priority" aria-label="Task priority">
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="low">Low</option>
+          </select>
+          <button type="submit" class="btn-primary">Add Task</button>
+        </form>
+
+        <ul id="task-list" class="task-list"></ul>
+      </div>
+
+      <!-- Declarative WebMCP Demo: HTML Form Attributes -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <span class="tag green">Declarative API • HTML toolname + toolparamdescription</span>
+            <h2>2. Declarative Booking Form</h2>
+          </div>
+          <span class="mono-badge">toolname="book_session"</span>
+        </div>
+        <p class="muted">
+          Chrome automatically converts this standard HTML form into a JSON Schema tool — zero JavaScript tool boilerplate required.
+        </p>
+
+        <form
+          id="booking-form"
+          class="stack-form"
+          toolname="book_session"
+          tooldescription="Reserve a live WebMCP demo slot with attendee name, email, and preferred topic."
+          toolautosubmit="true"
+        >
+          <div class="form-row">
+            <label>
+              Attendee Name
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="Jane Doe"
+                toolparamdescription="Full name of the person booking the demo slot."
+              >
+            </label>
+            <label>
+              Work Email
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="jane@example.com"
+                toolparamdescription="Contact email address for calendar confirmation."
+              >
+            </label>
+          </div>
+
+          <div class="form-row">
+            <label>
+              Demo Topic
+              <input
+                type="text"
+                name="topic"
+                required
+                placeholder="Declarative vs Imperative WebMCP"
+                toolparamdescription="Specific WebMCP capability or topic the attendee wants to see."
+              >
+            </label>
+            <label>
+              Format
+              <select name="format" toolparamdescription="Session format: live_demo, workshop, or qa.">
+                <option value="live_demo">Live Demo</option>
+                <option value="workshop">Hands-on Workshop</option>
+                <option value="qa">Architecture Q&amp;A</option>
+              </select>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-primary">Book Demo Slot</button>
+        </form>
+
+        <ul id="booking-list" class="booking-list"></ul>
+      </div>
+    </section>
+
+    <!-- Right Column: Built-In WebMCP Inspector & Simulator -->
+    <aside class="panel-stack inspector-col">
+      <div class="card inspector-card">
+        <div class="card-head">
+          <div>
+            <span class="tag yellow">Interactive Tool Tester</span>
+            <h2>WebMCP Tool Inspector</h2>
+          </div>
+          <button type="button" class="btn-ghost btn-sm" id="clear-log-btn">Clear Log</button>
+        </div>
+
+        <p class="muted">
+          Run any exposed tool directly from this simulator, or test with Chrome's official <strong>DevTools → Application → WebMCP</strong> / <strong>Model Context Tool Inspector</strong> extension when <code>chrome://flags/#enable-webmcp-testing</code> is enabled.
+        </p>
+
+        <div class="tool-selector">
+          <label for="tool-select">Active Tool Contract</label>
+          <select id="tool-select"></select>
+        </div>
+
+        <div class="schema-box">
+          <div class="box-title">Tool Input Schema (JSON Schema)</div>
+          <pre id="schema-preview"></pre>
+        </div>
+
+        <div class="args-box">
+          <div class="box-title">
+            <span>Simulate Agent Call Arguments (JSON)</span>
+            <button type="button" class="link-btn" id="reset-args-btn">Reset Example</button>
+          </div>
+          <textarea id="tool-args-input" rows="5" spellcheck="false"></textarea>
+          <button type="button" class="btn-primary full-width" id="run-tool-btn">Execute as AI Agent →</button>
+        </div>
+
+        <div class="log-box">
+          <div class="box-title">Live Invocation Log</div>
+          <pre id="invocation-log"></pre>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
