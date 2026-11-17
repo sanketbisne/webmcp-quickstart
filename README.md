@@ -62,6 +62,10 @@ Running **`add_task`** from **Run tool** (`title: "Ninja"`, `priority: "high"`) 
 
 ![Chrome DevTools Native add_task Execution](docs/assets/06-devtools-add-task.jpg)
 
+Running **`complete_task`** (`id: 4` or substring `title` fallback) marks **`#4 Ninja`** done (`Undo` button) and returns `{"completed":{"id":4,"title":"Ninja","priority":"high","done":true}}` in DevTools **Output**:
+
+![Chrome DevTools Native complete_task Execution](docs/assets/07-devtools-complete-task.jpg)
+
 ---
 
 ## Real-World Comparison: DOM Scraping vs. WebMCP
@@ -182,7 +186,8 @@ webmcp-quickstart/
 │   ├── 03-dark-mode-complete-task.png
 │   ├── 04-devtools-webmcp-completed.jpg
 │   ├── 05-devtools-all-4-tools.jpg
-│   └── 06-devtools-add-task.jpg
+│   ├── 06-devtools-add-task.jpg
+│   └── 07-devtools-complete-task.jpg
 ├── index.html   # Task Board UI + Declarative <form toolname="book_session">
 ├── style.css    # Clean responsive Light/Dark styling
 ├── app.js       # Imperative registerTool() + Declarative submit hook + Simulator
