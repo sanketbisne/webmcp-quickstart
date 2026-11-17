@@ -289,8 +289,8 @@ function initDeclarativeBookingForm() {
     renderBookings();
     appendLog(`DECLARATIVE SUBMIT (agentInvoked=${isAgent})`, booking);
 
-    // Chrome WebMCP declarative hook: return structured JSON back to calling agent
-    if (typeof e.respondWith === 'function') {
+    // Chrome WebMCP declarative hook: only respondWith when invoked by a real browser agent
+    if (e.agentInvoked && typeof e.respondWith === 'function') {
       e.respondWith(Promise.resolve(JSON.stringify({ status: 'booked', booking })));
     }
     form.reset();
@@ -404,3 +404,4 @@ document.addEventListener('DOMContentLoaded', () => {
   registerImperativeTools(true);
   initUI();
 });
+
