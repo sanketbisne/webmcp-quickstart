@@ -11,12 +11,12 @@ A zero-dependency, pure **HTML + CSS + Vanilla JavaScript** starter project show
 
 ## What Is WebMCP (and Why Does It Matter)?
 
-Traditionally, browser AI agents scrape messy DOM trees, guess CSS selectors, or rely on fragile screenshot clicks. **WebMCP (Web Model Context Protocol)** lets your web page directly publish typed tool contracts through Chrome (`navigator.modelContext`) and declarative HTML `<form>` attributes.
+Traditionally, browser AI agents scrape messy DOM trees, guess CSS selectors, or rely on fragile screenshot clicks. **WebMCP (Web Model Context Protocol)** lets your web page directly publish typed tool contracts through Chrome (`document.modelContext` in Chrome 157+ / `navigator.modelContext` in earlier builds) and declarative HTML `<form>` attributes.
 
 ```mermaid
 flowchart LR
-    Agent["AI Agent / Chrome Extension"] -->|"1. Discover JSON Schemas"| Browser["Chrome WebMCP (navigator.modelContext)"]
-    Browser -->|"Imperative JS API"| JS["navigator.modelContext.registerTool()"]
+    Agent["AI Agent / Chrome Extension"] -->|"1. Discover JSON Schemas"| Browser["Chrome WebMCP (document.modelContext)"]
+    Browser -->|"Imperative JS API"| JS["modelContext.registerTool()"]
     Browser -->|"Declarative HTML API"| Form["<form toolname='book_session'>"]
     JS -->|"2. Typed Execution"| UI["Live Task Board UI"]
     Form -->|"3. agentInvoked + respondWith()"| Booking["Live Booking Confirmation"]
@@ -26,7 +26,7 @@ This repo demonstrates **both WebMCP APIs** side-by-side in ~250 lines of clean 
 
 | API Surface | Where It Lives | How Tools Are Exposed | Tools Included |
 |---|---|---|---|
-| **Imperative API** | [`app.js`](app.js) | `navigator.modelContext.registerTool({...})` with `AbortController` | `list_tasks`, `add_task`, `complete_task` |
+| **Imperative API** | [`app.js`](app.js) | `document.modelContext.registerTool({...})` (with `navigator.modelContext` fallback) + `AbortController` | `list_tasks`, `add_task`, `complete_task` |
 | **Declarative API** | [`index.html`](index.html) | `<form toolname="..." tooldescription="..." toolautosubmit="true">` | `book_session` |
 
 ---
@@ -48,11 +48,15 @@ Calling `complete_task` (`{ "id": 1 }`) updates task `#1` directly on the board,
 
 ![Dark Mode and complete_task](docs/assets/03-dark-mode-complete-task.png)
 
-### 3. Native Chrome DevTools WebMCP Execution (`Completed`)
+### 3. Native Chrome DevTools WebMCP Execution (All 4 Tools + Output)
 
 Running `book_session` directly from **DevTools → Application → WebMCP → Run tool** executes the declarative `<form toolname="book_session">` contract natively inside Chrome, logs **`Completed`** (`0 failed`, `0 canceled`) in **Tool activity**, and renders **`🤖 Invoked by AI Agent`** on the page:
 
 ![Chrome DevTools Native WebMCP Completed Call](docs/assets/04-devtools-webmcp-completed.jpg)
+
+With **`chrome://flags/#enable-webmcp-testing`** enabled in Chrome 157+, all 4 tools (`add_task`, `book_session`, `complete_task`, and `list_tasks`) appear together in **Available tools** — and running `list_tasks` returns the live MCP JSON payload straight in DevTools **Output**:
+
+![Chrome DevTools All 4 Tools and list_tasks Output](docs/assets/05-devtools-all-4-tools.jpg)
 
 ---
 
@@ -126,7 +130,9 @@ Toggle **`Tools Registered`** on and off inside **1. Live Task Board** while wat
 
 **Imperative Tool (`app.js`):**
 ```javascript
-navigator.modelContext.registerTool({
+const modelContext = document.modelContext || navigator.modelContext;
+
+modelContext.registerTool({
   name: "add_task",
   description: "Create a new task item on the live task board.",
   inputSchema: {
@@ -170,7 +176,8 @@ webmcp-quickstart/
 │   ├── 01-overview-light.png
 │   ├── 02-agent-execution-demo.png
 │   ├── 03-dark-mode-complete-task.png
-│   └── 04-devtools-webmcp-completed.jpg
+│   ├── 04-devtools-webmcp-completed.jpg
+│   └── 05-devtools-all-4-tools.jpg
 ├── index.html   # Task Board UI + Declarative <form toolname="book_session">
 ├── style.css    # Clean responsive Light/Dark styling
 ├── app.js       # Imperative registerTool() + Declarative submit hook + Simulator

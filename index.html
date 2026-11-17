@@ -38,7 +38,7 @@
         <span class="tag">How WebMCP Works</span>
         <h1>Turn Any Web Page Into Structured AI Tools</h1>
         <p>
-          Instead of forcing AI agents to scrape CSS selectors or guess clicks, this page exposes typed contracts directly through <code>navigator.modelContext</code> (Imperative JS) and HTML <code>&lt;form toolname="..."&gt;</code> attributes (Declarative HTML).
+          Instead of forcing AI agents to scrape CSS selectors or guess clicks, this page exposes typed contracts directly through <code>document.modelContext</code> / <code>navigator.modelContext</code> (Imperative JS) and HTML <code>&lt;form toolname="..."&gt;</code> attributes (Declarative HTML).
         </p>
       </div>
 
@@ -46,7 +46,7 @@
       <div class="card">
         <div class="card-head">
           <div>
-            <span class="tag blue">Imperative API • navigator.modelContext.registerTool()</span>
+            <span class="tag blue">Imperative API • modelContext.registerTool()</span>
             <h2>1. Live Task Board</h2>
           </div>
           <label class="toggle-chip" title="Mount or unmount add_task & complete_task via AbortController">
